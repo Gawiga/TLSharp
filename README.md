@@ -45,7 +45,7 @@ All dependencies listed in [package.conf file](https://github.com/sochix/TLSharp
 
 # Starter Guide 
 
-To see how to start and how use this library, [follow this link](../GUIDE.md). 📚
+To see how to start and how use this library, [follow this link](https://github.com/Gawiga/TLSharp/blob/master/GUIDE.md). 📚
 
 # Available Methods
 

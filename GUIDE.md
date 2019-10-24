@@ -1,12 +1,10 @@
-Starter Guide
-------------
-
 # Getting Start
 - [Getting Start](#getting-start)
   - [Quick Configuration](#quick-configuration)
   - [First requests](#first-requests)
   - [Working with files](#working-with-files)
   - [Connecting with Telegram](#connecting-with-telegram)
+  - [Get a user, create a group and send a invitation link](#get-a-user-create-a-group-and-send-a-invitation-link)
 
 ## Quick Configuration
 Telegram API isn't that easy to start. You need to do some configuration first.
@@ -149,3 +147,41 @@ if (!autorizado)
     }
 }
 ```
+
+
+## Get a user, create a group and send a invitation link 
+
+```csharp
+
+var result = await Client.GetContactsAsync();
+
+//gets a specific user to create group
+var user = result.Users.Where(x => x.GetType() == typeof(TLUser))
+    .Cast<TLUser>().FirstOrDefault(x => x.Phone == "551199009000");
+
+//set the new user
+var newUser = new TLInputUser() { UserId = user.Id };
+
+//create a list of users
+var listUser = new TLVector<TLAbsInputUser>();
+var inputUser = new TLInputUser() { UserId = user.Id, AccessHash = (long)user.AccessHash };
+listUser.Add(inputUser);
+
+//make the resquest to create a new group
+var newChatRequest = new TLRequestCreateChat()
+{
+    Users = listUser,
+    Title = "Conan The Barbarian"
+};
+var newGroup = await Client.SendRequestAsync<TLUpdates>(newChatRequest);
+
+//gets the group create
+var absChat = newGroup.Chats.FirstOrDefault();
+var newChat = (TLChat)absChat;
+
+//gets the invite from that group
+var inviteRequest = new TLRequestExportChatInvite() { ChatId = newChat.Id };
+var chatInvite = await Client.SendRequestAsync<TLChatInviteExported>(inviteRequest);
+
+//sends invite in a message
+await Client.SendMessageAsync(new TLInputPeerUser() { UserId = user.Id }, chatInvite.Link.ToString());
