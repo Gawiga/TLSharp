@@ -43,9 +43,9 @@ or build from source
 TLSharp has a few dependenices, most of functionality implemented from scratch.
 All dependencies listed in [package.conf file](https://github.com/sochix/TLSharp/blob/master/TLSharp.Core/packages.config).
 
-# Starter Guide 📚
+# Starter Guide 
 
-To see how to start and how use this library, [follow this link](../GUIDE.md).
+To see how to start and how use this library, [follow this link](../GUIDE.md). 📚
 
 # Available Methods
 

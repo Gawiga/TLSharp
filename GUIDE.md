@@ -6,7 +6,7 @@ Starter Guide
   - [Quick Configuration](#quick-configuration)
   - [First requests](#first-requests)
   - [Working with files](#working-with-files)
-- [Examples](#examples)
+  - [Connecting with Telegram](#connecting-with-telegram)
 
 ## Quick Configuration
 Telegram API isn't that easy to start. You need to do some configuration first.
@@ -104,5 +104,48 @@ To download file you should call **GetFile** method
 
 Full code you can see at [DownloadFileFromContactTest](https://github.com/sochix/TLSharp/blob/master/TLSharp.Tests/TLSharpTests.cs#L167)
 
-# Examples
+## Connecting with Telegram
 
+```csharp
+var apiId = 0; //your apiId
+var apiHash = "333ddd"; //your hash
+var directoryInfo = new DirectoryInfo("D:\\"); //putting in a different place the .dat file
+var store = new FileSessionStore(directoryInfo);
+var session = store.Load("anonimous"); //if the already exists
+string sessionName;
+
+if (session == null)
+{
+    sessionName = "new"; //create new .dat file
+}
+else
+{
+    sessionName = session.SessionUserId.ToString();
+}
+var client = new TelegramClient(apiId, apiHash, store, sessionName);
+
+await client.ConnectAsync(); //waiting for the connection
+var isConnected = client.IsConnected;
+var autorizado = client.IsUserAuthorized();
+
+if (!autorizado)
+{
+    var telefone = "55511999990000"; // your telephone
+    var hash = await client.SendCodeRequestAsync(telefone);
+    var code = "0000"; //the code sended to you by telegram. you can change code in debugger
+    var tlPassword = new TLPassword();
+    var user = new TLUser();
+
+    try
+    {
+        user = await client.MakeAuthAsync(telefone, hash, code);
+    }
+    catch (CloudPasswordNeededException)
+    {
+        //if you have 2fa auth you should have this
+        var password = await client.GetPasswordSetting();
+        var passwordStr = "password";
+        user = await client.MakeAuthWithPasswordAsync(password, passwordStr);
+    }
+}
+```
